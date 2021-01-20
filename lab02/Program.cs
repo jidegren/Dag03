@@ -57,7 +57,6 @@ namespace lab02
             try
             {
             double insattning = int.Parse(input);
-            //historik.Add
             saldo += insattning;
             }
             catch (Exception)
@@ -65,5 +64,7 @@ namespace lab02
                 Console.WriteLine("Något gick fel");                
             }
         }
+
+
     }
 }
