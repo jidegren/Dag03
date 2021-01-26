@@ -6,11 +6,13 @@ namespace lab02
     class Program
     {
         static double saldo = 0;
-        static bool active = true;
-        static List<string> historik = new List<string>();
+        static bool keepGoing = true;
+        static string[] kontotransaktioner = new string[3];
+        static int totalaTransaktioner = 0;
+        static int size = kontotransaktioner.Length;
         static void Main(string[] args)
         {
-            while (active)
+            while (keepGoing)
             {
                 Menu();
             }
@@ -31,40 +33,114 @@ namespace lab02
                     break;
 
                 case ConsoleKey.U:
-                    Console.WriteLine("Du har gjort en insättning");
+                    Uttag();
+                    Console.WriteLine("Du har gjort ett uttag");
                     break;
                 case ConsoleKey.S:
-                    Console.WriteLine("Här är ditt saldo");
-                    visaSaldoHistorik();
+                    Console.Write("Här är ditt saldo: ");
+                    Console.WriteLine(saldo);
+                    VisaSaldoHistorik();
                     Console.ReadLine();
                     break;
                 case ConsoleKey.A:
                 default:
-                    active = false;
+                    keepGoing = false;
                     break;
             }
         }
 
-        private static void visaSaldoHistorik()
+        private static void Uttag()
         {
-            Console.WriteLine(saldo);
+            Console.WriteLine("Du har valt Uttag:");
+            Console.Write("Hur mycket vill du ta ut: ");
+            string input = Console.ReadLine();
+            string kontohändelse = SkapaKontohändelse(input, "-");
+            try
+            {
+
+                // 100kr vill plocka ut 110
+
+                double uttag = int.Parse(input);
+                if (uttag <= saldo && uttag > 0)
+                {
+                    saldo -= uttag;
+                    kontotransaktioner[totalaTransaktioner % size] = kontohändelse;
+                    totalaTransaktioner++;
+                    Console.WriteLine($"Du har gjort en insättning på {uttag}kr och ditt totala saldo efter uttaget är {saldo}kr");
+                    Console.ReadKey();
+                }
+                else if  (uttag <= saldo && uttag > 0)
+                {
+                    Console.WriteLine("Du har inte tillräckligt med pengar för uttaget");
+                    Console.ReadKey();
+                }
+                else
+                {
+                    Console.WriteLine("Uttaget får inte vara negativt");
+                }
+
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Ogiltig inmatning");
+                Console.ReadKey();
+            }
+        }
+
+        private static void VisaSaldoHistorik()
+        {
+
+            var tidsstämpel = totalaTransaktioner - 1 + kontotransaktioner.Length;
+                                // 4                        // 3
+            for (int i = 0; i < kontotransaktioner.Length; i++)
+            {
+                string kontohändelse = kontotransaktioner[tidsstämpel % kontotransaktioner.Length];
+                tidsstämpel--;
+                if (kontohändelse != null)
+                {
+                    Console.WriteLine(kontohändelse);
+                }
+            }
+
         }
 
         private static void Insattning()
         {
+            Console.WriteLine("Du har valt insättning");
             Console.WriteLine("Hur mycket vill du sätta in");
             string input = Console.ReadLine();
+            string kontohändelse = SkapaKontohändelse(input, "+");
             try
             {
-            double insattning = int.Parse(input);
-            saldo += insattning;
+                double insattning = int.Parse(input);
+                if (insattning > 0)
+                {
+                    saldo += insattning;
+                    kontotransaktioner[totalaTransaktioner % size] = kontohändelse;
+                    totalaTransaktioner++;
+                    Console.WriteLine($"Du har gjort en insättning på {insattning}kr och ditt totala saldo är {saldo}kr");
+                    Console.ReadKey();
+                }
+                else
+                {
+                    Console.WriteLine("Du kan inte sätta in ett negativt tal");
+                    Console.ReadKey();
+                }
             }
             catch (Exception)
             {
-                Console.WriteLine("Något gick fel");                
+                Console.WriteLine("Ogiltig inmatning");
+                Console.ReadKey();
             }
+
         }
 
-
+        private static string SkapaKontohändelse(string input, string operand)
+        {
+            DateTime händelseTid = DateTime.Now;
+            string uppdelare = " ";
+            string kontohändelse = $"{händelseTid} {uppdelare} {operand}{input}";
+            return kontohändelse;
+        }
     }
 }
