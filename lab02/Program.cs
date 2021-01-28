@@ -93,9 +93,12 @@ namespace lab02
             var tidsstämpel = totalaTransaktioner - 1 + kontotransaktioner.Length;
                                 // 4                        // 3
             for (int i = 0; i < kontotransaktioner.Length; i++)
+                                    // 3
             {
                 string kontohändelse = kontotransaktioner[tidsstämpel % kontotransaktioner.Length];
+                                            // 3            //6             //3
                 tidsstämpel--;
+                    //6
                 if (kontohändelse != null)
                 {
                     Console.WriteLine(kontohändelse);
